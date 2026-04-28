@@ -1,19 +1,37 @@
-flowchart TD
-  A["Web Interface (Next.js)"]
-  B["Backend API Gateway (FastAPI)"]
-  C["Sakthi Core & MCP Engine"]
-  D["GenAI Modeling Agent"]
-  E["Document Processor Service"]
-  F["LLM Integration Layer"]
-  G["External LLM Providers"]
-  A -->|"Submits Natural Language Input"| B
-  B -->|"Processes MCP Request"| C
-  E -->|"Feeds Processed Documents"| C
-  C -->|"Orchestrates Agent Logic"| D
-  C -->|"Requests LLM Interaction"| F
-  F -->|"Queries LLM"| G
-  G -->|"Returns LLM Response"| F
-  F -->|"Delivers LLM Output"| C
-  D -->|"Returns Agent Results"| C
-  C -->|"Sends Actionable Output"| B
-  B -->|"Displays Output"| A
+%%{init: {'flowchart': {'nodeSpacing': 50, 'rankSpacing': 70}}}%%
+flowchart LR
+  subgraph UI_Layer ["UI Layer"]
+    A["User Web Interface
+(Next.js, Node.js)"]
+  end
+  subgraph API_Layer ["API Layer"]
+    B["Backend API Services
+(FastAPI, C#/.NET)"]
+  end
+  subgraph Processing_Layer ["Processing Layer"]
+    C["Sakthi MCP Language Engine
+(Context Protocol Execution)"]
+    F["Document Processor
+(Text Extraction & Analysis)"]
+  end
+  subgraph AI_Layer ["AI Layer"]
+    D["Sakthi LLM Integration
+(Orchestrates LLM calls)"]
+    E["GenAI Modeling Agent
+(Generative AI Tasks)"]
+  end
+  subgraph Data_Storage_Layer ["Data/Storage Layer"]
+    G["Context & Data Store
+(Persistent Storage, Context Management)"]
+  end
+  A --> B
+  B --> C
+  B --> F
+  B --> G
+  C --> D
+  C --> E
+  C --> F
+  C --> G
+  G --> C
+  E --> D
+  D --> G
