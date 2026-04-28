@@ -1,0 +1,19 @@
+flowchart TD
+  A["Web Interface (Next.js)"]
+  B["Backend API Gateway (FastAPI)"]
+  C["Sakthi Core & MCP Engine"]
+  D["GenAI Modeling Agent"]
+  E["Document Processor Service"]
+  F["LLM Integration Layer"]
+  G["External LLM Providers"]
+  A -->|"Submits Natural Language Input"| B
+  B -->|"Processes MCP Request"| C
+  E -->|"Feeds Processed Documents"| C
+  C -->|"Orchestrates Agent Logic"| D
+  C -->|"Requests LLM Interaction"| F
+  F -->|"Queries LLM"| G
+  G -->|"Returns LLM Response"| F
+  F -->|"Delivers LLM Output"| C
+  D -->|"Returns Agent Results"| C
+  C -->|"Sends Actionable Output"| B
+  B -->|"Displays Output"| A
