@@ -1,7 +1,7 @@
 # Sakthi Platform
 
 ## Overview
-The Sakthi Platform is an enterprise-grade, AI-powered system designed to transform natural language inputs into actionable outputs. At its core is the MCP Language (Sakthi), a specialized framework for designing and executing Model Context Protocols (MCP) in Natural Language Processing. It provides a structured approach to manage context-aware workflows, semantic parsing, and seamless integration with Large Language Models (LLMs) for context-driven decision-making and language transformations. Built with Python, DeepSeek LLM, ChromaDB, and LangGraph, Sakthi delivers scalable, context-aware solutions for schema transformation, document processing, and workflow orchestration, complete with real-time monitoring, dynamic rule processing, and multi-format outputs. The project repository is located at [ramamurthy-540835/sakthi-platform](https://github.com/ramamurthy-540835/sakthi-platform).
+The Sakthi Platform is an enterprise-grade, AI-powered system designed to transform natural language inputs into actionable outputs. At its core is the MCP Language (Sakthi), a specialized framework for designing and executing Model Context Protocols (MCP) in Natural Language Processing. It provides a structured approach to manage context-aware workflows, semantic parsing, and seamless integration with Large Language Models (LLMs) for context-driven decision-making and language transformations. Built primarily with Python, DeepSeek LLM, ChromaDB, and LangGraph, Sakthi delivers scalable, context-aware solutions for schema transformation, document processing, and complex workflow orchestration, complete with real-time monitoring, dynamic rule processing, and multi-format outputs.
 
 ## Business Problem
 Modern enterprises face significant challenges in converting unstructured natural language data or complex domain-specific requests into actionable, structured outputs. This includes tasks such as migrating database schemas between different platforms, extracting specific information from diverse document types (PDFs, spreadsheets), and orchestrating complex workflows based on high-level natural language instructions. Manual approaches are slow, error-prone, and lack scalability and context-awareness. The Sakthi Platform addresses these challenges by providing an automated, AI-driven solution that understands natural language intent, leverages historical context, and generates precise, actionable outputs across various enterprise use cases.
@@ -15,9 +15,9 @@ Modern enterprises face significant challenges in converting unstructured natura
 *   **Multi-format Outputs**: Generates diverse output formats including JSON, SQL scripts, CSV, and API-ready data structures, adaptable to various downstream systems.
 *   **Workflow Orchestration & Monitoring**: Employs LangGraph to orchestrate complex AI workflows, monitor progress, and manage state across multi-step processes.
 *   **Document Processing**: Capable of handling multi-format documents (PDF, XLSX, CSV) for data extraction and analysis.
+*   **Backend Services/APIs**: Provides a well-defined FastAPI backend for programmatic access and integration with other systems.
+*   **Web Interface**: Features an interactive Next.js dashboard for user interaction, task submission, and visualization of results.
 *   **Enterprise-Grade Deployment**: Designed for robust deployment, supporting Dockerization, Kubernetes readiness, Nginx proxying, and WebSocket-based real-time updates.
-*   **Backend Services/APIs**: Provides a well-defined FastAPI backend for programmatic access and integration.
-*   **Web Interface**: Features an interactive Next.js dashboard for user interaction and visualization.
 
 ## Tech Stack
 *   **Core Language**: Python
@@ -123,7 +123,7 @@ To get the Sakthi Platform running on your local machine, follow these steps. Th
         ```bash
         cd backend/
         pip install -r requirements.txt
-        uvicorn main:app --reload --host 0.0.0.0 --port 8000
+        uvicorn main:app --host 0.0.0.0 --port 8000
         ```
     *   **Frontend**:
         ```bash
@@ -131,95 +131,57 @@ To get the Sakthi Platform running on your local machine, follow these steps. Th
         npm install
         npm run dev
         ```
-    *   Ensure any dependencies like ChromaDB are properly configured and running for standalone services.
+    Ensure all necessary environment variables are set in your shell session for manual setup.
 
 ## Deployment
-The Sakthi Platform is designed for scalable and robust enterprise deployments, primarily leveraging containerization and orchestration technologies.
+The Sakthi Platform is designed for robust, enterprise-grade deployment, leveraging containerization and orchestration technologies.
 
-1.  **Containerization with Docker:**
-    Each core service (`backend`, `web-interface`, `document-processor`, `genai-modeling-agent`) is provided with a `Dockerfile`, enabling consistent and isolated environments. These can be built individually and pushed to a container registry.
-    ```bash
-    # Example: Build backend image
-    docker build -t your-registry/sakthi-backend:latest ./backend
-    ```
+*   **Containerization**: All core services (backend, frontend, document processor, GenAI agent) are Dockerized, ensuring portability and consistent environments across different stages. Dockerfiles are provided within each service directory.
+*   **Orchestration**: The platform is Kubernetes-ready, with example configurations provided in `deployment/kubernetes/sakthi-platform.yaml`. This allows for scalable deployments, automated load balancing, self-healing, and efficient resource management.
+*   **Reverse Proxy & Load Balancing**: Nginx can be used as a reverse proxy for the frontend and backend services, as well as for handling WebSocket connections, providing enhanced security, caching, and load distribution. A sample `nginx.conf` is available in `deployment/`.
+*   **Real-time Communication**: WebSockets are used for real-time updates and notifications, which are supported through Nginx proxying for robust production environments.
+*   **LLM Servers**: Dedicated scripts (e.g., `deployment/launch_enhanced_llm_servers.sh`) are provided to manage the startup of LLM inference servers, which can be integrated into the containerized deployment strategy or run on specialized hardware.
 
-2.  **Docker Compose (Single-Server / Local Production):**
-    For deploying all services on a single server or for local production-like environments, `deployment/docker-compose.yml` provides a straightforward solution. This configuration handles inter-service communication, volume mapping, and environment variable injection.
-    ```bash
-    cd deployment/
-    docker-compose -f docker-compose.yml up -d
-    ```
-
-3.  **Kubernetes (Production-Grade Scalability):**
-    For high availability, scalability, and automated management in production, Kubernetes is the recommended orchestrator. The `deployment/kubernetes/sakthi-platform.yaml` file contains definitions for Deployments, Services, Ingresses, and other Kubernetes resources to manage the Sakthi Platform microservices.
-    *   **Prerequisites**: A Kubernetes cluster (e.g., Minikube, EKS, GKE, AKS) and `kubectl` configured.
-    *   **Deployment**:
-        ```bash
-        kubectl apply -f deployment/kubernetes/sakthi-platform.yaml
-        ```
-    *   Ensure Persistent Volumes are configured for ChromaDB and other stateful components.
-
-4.  **Nginx Proxying:**
-    For production deployments, Nginx (`deployment/nginx.conf`) can be used as a reverse proxy, load balancer, and to handle SSL termination. It provides an efficient entry point for external traffic to the `web-interface` and `backend` services.
-
-5.  **Real-time Updates:**
-    The platform supports WebSocket-based real-time communication, which should be configured to pass through proxies like Nginx correctly.
+For detailed deployment instructions for a production environment, refer to the documentation in the `docs/` directory.
 
 ## Demo Workflow
-The Sakthi Platform simplifies complex natural language processing tasks through an intuitive workflow, typically accessed via the web interface.
+A typical user interaction with the Sakthi Platform, demonstrating its core capabilities, would follow this workflow:
 
-1.  **Access the Web Interface:**
-    Open your web browser and navigate to the deployed Next.js frontend (e.g., `http://localhost:3000` or your production domain). The interactive dashboard provides the primary user interaction point.
-
-2.  **Submit a Natural Language Query or Upload Document:**
-    *   **Text Query**: In the input field, type a natural language instruction or query. For instance:
-        *   "Convert my Oracle HR schema to BigQuery, focusing on employee and department tables."
-        *   "Generate SQL to list all customers with orders placed in the last quarter."
-    *   **Document Upload**: Use the provided upload functionality to submit documents (PDF, XLSX, CSV) for processing. For example, upload a financial report PDF with the instruction: "Extract all revenue figures from this Q3 financial report."
-
-3.  **Automated Processing and Contextualization:**
-    *   The request from the `web-interface` is sent to the `backend` FastAPI service.
-    *   The `backend` orchestrates the workflow using LangGraph, involving the `sakthi-language` engine for intent parsing.
-    *   The `genai-modeling-agent` integrates with DeepSeek LLM (via `sakthi-llm-integration`) to perform the core AI task.
-    *   For document-related tasks, the `document-processor` parses the uploaded file.
-    *   `ChromaDB` is leveraged for Retrieval-Augmented Generation (RAG) to inject relevant historical context or domain-specific knowledge, ensuring highly context-aware and accurate responses.
-    *   Dynamic business rules from `rules.csv` are applied for validation and conditional logic.
-
-4.  **View Real-time Results:**
-    The results and workflow progress are streamed back to the `web-interface` via WebSockets.
-    *   For schema conversion, generated SQL DDL statements will be displayed.
-    *   For data extraction, structured JSON or CSV output will be presented.
-    *   The dashboard provides status updates, intermediate steps, and the final actionable output.
-
-5.  **Utilize Outputs:**
-    The generated outputs (e.g., SQL scripts, JSON data) can be downloaded, copied, or directly used to drive downstream enterprise systems and processes.
+1.  **Access Web Interface**: A user navigates to the Sakthi Platform's web dashboard (`http://localhost:3000` in a local setup).
+2.  **Submit Natural Language Request**: On the dashboard, the user inputs a complex request in plain English, for example, "Convert the HR schema from Oracle to BigQuery, ensure all sensitive fields are masked, and output the SQL DDL."
+3.  **Optional Document Upload**: If the task involves document processing (e.g., "Extract revenue data from this PDF"), the user uploads the relevant PDF or Excel file through the interface.
+4.  **Backend Processing & Orchestration**:
+    *   The web interface sends the request to the FastAPI backend.
+    *   The backend initiates a complex workflow using LangGraph, leveraging the MCP Language (Sakthi) to break down the request.
+    *   The `genai-modeling-agent` interacts with DeepSeek LLM via `sakthi-llm-integration` for semantic parsing, intent recognition, schema analysis, and SQL generation.
+    *   ChromaDB is queried for historical context and relevant domain knowledge (RAG), enhancing the accuracy of LLM responses.
+    *   Dynamic rules from `rules.csv` are applied for data validation, masking requirements, and conditional logic.
+    *   If a document was uploaded, the `document-processor` service handles data extraction and pre-processing.
+5.  **Real-time Monitoring**: The user can monitor the progress of their task on the dashboard, receiving real-time updates via WebSockets as the workflow progresses through its various stages.
+6.  **Receive Multi-format Output**: Upon completion, the system generates the requested output, such as a BigQuery SQL DDL script, a JSON file with transformed data, or a CSV export. This output is stored in the `output/` directory and presented to the user on the dashboard, ready for download or further action.
 
 ## Future Enhancements
-The Sakthi Platform is designed for continuous evolution. Potential future enhancements include:
+The Sakthi Platform is continuously evolving. Planned future enhancements include:
 
-*   **Expanded LLM Integration**: Support for a wider array of proprietary and open-source Large Language Models to offer greater flexibility and specialized capabilities across various domains.
-*   **Advanced UI/UX**: Further enhancements to the web interface for more interactive visualizations, comprehensive workflow monitoring, and user-definable dashboards.
-*   **Enhanced Rule Management UI**: A dedicated interface for managing, validating, and testing business rules, providing a more intuitive approach than file-based configurations.
-*   **Multi-tenancy Support**: Implementation of features to securely isolate data and workflows for multiple organizations or departments within a single deployment.
-*   **Integration Ecosystem**: Development of pre-built connectors and APIs for seamless integration with popular enterprise systems (e.g., CRM, ERP, BI tools, cloud data warehouses).
-*   **Performance Optimizations**: Ongoing efforts to optimize latency for real-time interactions and throughput for large-scale batch processing, potentially involving dedicated GPU acceleration for LLM inference.
-*   **Auditing and Compliance**: Advanced logging, auditing trails, and compliance features to meet stringent enterprise security and regulatory requirements.
-*   **Voice and Multimodal Input**: Exploration of voice command interfaces and processing of other multimodal inputs alongside natural language and documents.
+*   **Broader LLM Integration**: Expand support for a wider range of Large Language Models and cloud-based LLM APIs to offer more flexibility and options for performance and cost.
+*   **Advanced Analytics & Reporting**: Integrate more sophisticated dashboards and reporting tools for deeper insights into workflow performance, LLM usage, and output quality.
+*   **Enhanced Security & Access Control**: Implement granular Role-Based Access Control (RBAC) and integrate with enterprise identity management systems.
+*   **Self-Learning Capabilities**: Develop mechanisms for the platform to learn from past interactions, user feedback, and corrected outputs to continuously improve its accuracy and context understanding.
+*   **Pre-built Workflow Templates**: Offer a library of pre-defined, customizable MCP templates for common enterprise use cases to accelerate new project setups.
+*   **Increased Data Source Connectivity**: Broaden native connectors to more enterprise data sources, including various databases, cloud storage, and SaaS applications.
 ## Architecture
 
 ```mermaid
 flowchart TD
-  A["User interacts via Web Interface (Next.js)."]
-  B["Backend API (FastAPI) receives and routes requests."]
-  C["Sakthi Language Core processes Model Context Protocols (MCPs)."]
-  D["Document Processor handles input for context extraction."]
-  E["LLM Integration performs context-driven decision-making and transformations."]
-  F["GenAI Modeling Agent executes context-aware workflows and generates models."]
+  A["Client sends API request"]
+  B["Load balancer/API Gateway routes request to Sakthi Platform backend"]
+  C["Python backend processes request with business logic"]
+  D["Database or external services are queried"]
+  E["Backend generates and returns API response"]
   A --> B
   B --> C
   C --> D
   D --> E
-  E --> F
 ```
 
 For a standalone preview, see [docs/architecture.html](docs/architecture.html).
